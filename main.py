@@ -35,9 +35,7 @@ if __name__== '__main__':
 
     @bot.message_handler(commands=['alltime'])
     def alltime(message):
-        now = datetime.now()
-        time_now= str(now).split(' ')[0]
-        URL_alltime = URL + '2010-01-01' + time_now
+        URL_alltime = URL + '2010-01-01'
         try:
             response = requests.get(URL_alltime).json()
         except Exception:
@@ -49,13 +47,13 @@ if __name__== '__main__':
     @bot.message_handler(commands=['mytime'])
     def mytime(message):
         try:
-            bot.send_message(message.chat.id,
+            msg = bot.send_message(message.chat.id,
             'Укажите, пожалуйста, даты начала и конца в формате гггг-мм-дд в <b>одном</b> сообщении через пробел!', parse_mode='html')
+            bot.register_next_step_handler(msg, getting_a_response)
         except Exception:
             bot.send_message(message.chat.id, 'Ошибка отправки сообщения. Попробуйте позже.')
 
 
-    @bot.message_handler()
     def getting_a_response(message):
         message_from_user = str(message.text)
 
@@ -71,9 +69,11 @@ if __name__== '__main__':
                 response_str = str(response)
                 bot.send_message(message.chat.id, response_str)
             else:
-                bot.send_message(message.chat.id, 'Дата начала не может быть больше даты окончания :)\nВведите корректные данные.')
+                msg = bot.send_message(message.chat.id, 'Дата начала не может быть больше даты окончания :)\nВведите корректные данные.')
+                bot.register_next_step_handler(msg, getting_a_response)
         else:
-            bot.send_message(message.chat.id, 'Говорил же, дата нужна только формата ГГГГ-ММ-ДД. <b>Сначала начальная, потом, через пробел, конечная. Иначе никак не получится!</b>', parse_mode='html')
+            msg = bot.send_message(message.chat.id, 'Говорил же, дата нужна только формата ГГГГ-ММ-ДД. <b>Сначала начальная, потом, через пробел, конечная. Иначе никак не получится!</b>', parse_mode='html')
+            bot.register_next_step_handler(msg, getting_a_response)
 
 
     while True:
