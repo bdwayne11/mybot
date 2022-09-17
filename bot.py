@@ -1,22 +1,15 @@
-import os
 import requests
 import time
 import re
 
-from datetime import datetime
-from dotenv import load_dotenv
 import telebot
 from telebot import types
 
 
 if __name__== '__main__':
-    load_dotenv()
 
-    TG_TOKEN = os.getenv('TOKEN_TG')
-    PUSH_HOUSE_TOKEN = os.getenv('TOKEN_PUSH_HOUSE')
-
-    bot = telebot.TeleBot(TG_TOKEN)
-    URL = f'http://api.push.house/api/statistics/{PUSH_HOUSE_TOKEN}/data/'
+    bot = telebot.TeleBot('5778212108:AAFkhIi8dbEvUO1NhEmq1csc5A_O6Cu99Yk')
+    URL = f'http://api.push.house/api/statistics/8f216ce044a9cb995a6a921cd94b6f94/data/'
 
     pattern = r'^\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2}$'
 
@@ -40,8 +33,14 @@ if __name__== '__main__':
             response = requests.get(URL_alltime).json()
         except Exception:
             bot.send_message(message.chat.id, f'Нет доступа к эндпоинту {URL}')
-        response_str = str(response)
-        bot.send_message(message.chat.id, response_str)
+        for dict in response:
+            date_start = dict['tname']
+            feed = dict['feed']
+            clicks = dict['clicks']
+            cost = dict['cost']
+            shows = dict['shows']
+            ctr = dict['ctr']
+            bot.send_message(message.chat.id, f"Дата: {date_start}\nfeed: {feed}\nКлики: {clicks}\nЗатраты в $: {cost}\nПоказы: {shows}\nCTR: {ctr}\n")
 
 
     @bot.message_handler(commands=['mytime'])
@@ -66,8 +65,14 @@ if __name__== '__main__':
                     response = requests.get(URL_mytime).json()
                 except Exception:
                     bot.send_message(message.chat.id, f'Нет доступа к эндпоинту {URL}')
-                response_str = str(response)
-                bot.send_message(message.chat.id, response_str)
+                for dict in response:
+                    date_start = dict['tname']
+                    feed = dict['feed']
+                    clicks = dict['clicks']
+                    cost = dict['cost']
+                    shows = dict['shows']
+                    ctr = dict['ctr']
+                    bot.send_message(message.chat.id, f"Дата: {date_start}\nfeed: {feed}\nКлики: {clicks}\nЗатраты в $: {cost}\nПоказы: {shows}\nCTR: {ctr}\n")
             else:
                 msg = bot.send_message(message.chat.id, 'Дата начала не может быть больше даты окончания :)\nВведите корректные данные.')
                 bot.register_next_step_handler(msg, getting_a_response)
@@ -76,9 +81,9 @@ if __name__== '__main__':
             bot.register_next_step_handler(msg, getting_a_response)
 
 
-    while True:
-        try:
-            bot.polling(non_stop=True)
-        except Exception as err:
-            print(err)
-            time.sleep(RETRY_TIME)
+    # while True:
+    try:
+        bot.polling(non_stop=True)
+    except Exception as err:
+        print(err)
+        time.sleep(RETRY_TIME)
