@@ -8,8 +8,8 @@ from telebot import types
 
 if __name__== '__main__':
 
-    bot = telebot.TeleBot('5778212108:AAFkhIi8dbEvUO1NhEmq1csc5A_O6Cu99Yk')
-    URL = f'http://api.push.house/api/statistics/8f216ce044a9cb995a6a921cd94b6f94/data/'
+    bot = telebot.TeleBot('')
+    URL = f''
 
     pattern = r'^\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2}$'
 
